@@ -1,1 +1,1 @@
-from .inline import admin_menu
+from .inline import admin_menu_keyboard

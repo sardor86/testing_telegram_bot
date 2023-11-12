@@ -1,12 +1,13 @@
-import logging
 from dataclasses import dataclass
 
 from environs import Env
 from gino import Gino
 import logging
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 gino_db = Gino()
+path = Path(__file__).parent.parent
 
 
 @dataclass
