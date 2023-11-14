@@ -16,7 +16,23 @@ async def create_new_test(callback: CallbackQuery) -> None:
     )
 
     logger.info('create new test')
-    await callback.message.edit_text('Отправьте файл с тестом')
+    await callback.message.edit_text('Отправьте название теста')
+
+    logger.info('set get_name in AddNewTest state')
+    await AddNewTest.get_name.set()
+
+
+async def get_name(message: Message, state: FSMContext) -> None:
+    logging.basicConfig(
+        level=logging.INFO,
+        format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
+    )
+
+    logger.info('get tests name ant save it on RAM')
+    async with state.proxy() as data:
+        data['name'] = message.text
+
+    await message.reply('Отправьте нам файл с тестом')
 
     logger.info('set get_file in AddNewTest state')
     await AddNewTest.get_file.set()
@@ -27,6 +43,9 @@ async def get_file(message: Message, state: FSMContext) -> None:
         level=logging.INFO,
         format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
     )
+
+    async with state.proxy() as data:
+        test_name = data['name']
 
     logger.info('state is finished')
     await state.finish()
@@ -43,7 +62,7 @@ async def get_file(message: Message, state: FSMContext) -> None:
     await message.bot.download_file(file.file_path, str(file_path))
 
     logger.info('Create data in data base')
-    await Tests().create_test(file_path)
+    await Tests().create_test(test_name, file_path)
 
 
 def register_create_new_test_handler(dp: Dispatcher) -> None:
@@ -56,7 +75,13 @@ def register_create_new_test_handler(dp: Dispatcher) -> None:
     dp.register_callback_query_handler(create_new_test,
                                        lambda callback: callback.data == 'create_new_test',
                                        is_admin=True)
-    logger.info('Register get file state in create new test handler')
+
+    logger.info('Register get_name state in create new test handler')
+    dp.register_message_handler(get_name,
+                                is_admin=True,
+                                state=AddNewTest.get_name)
+
+    logger.info('Register get_file state in create new test handler')
     dp.register_message_handler(get_file,
                                 is_admin=True,
                                 content_types=['document'],

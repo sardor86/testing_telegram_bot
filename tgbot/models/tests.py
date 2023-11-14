@@ -9,6 +9,7 @@ class Tests(Base):
         __tablename__ = 'tests'
 
         id = gino_db.Column(gino_db.Integer(), primary_key=True)
+        name = gino_db.Column(gino_db.String(50), nullable=False)
         path = gino_db.Column(gino_db.String(255), nullable=False)
 
         def __str__(self) -> str:
@@ -17,8 +18,11 @@ class Tests(Base):
         def __repr__(self) -> str:
             return f'<Tests {self.id}>'
 
-    async def create_test(self, path: str) -> int:
-        test = self.TestTable(path=path)
+    async def create_test(self, name: str, path: str) -> int:
+        test = self.TestTable(
+            name=name,
+            path=path
+        )
         await test.create()
 
         return test.id
@@ -34,8 +38,8 @@ class Tests(Base):
             return True
         return False
 
-    async def get_all_event(self) -> list:
+    async def get_all_tests(self) -> list:
         return await self.TestTable.query.gino.all()
 
-    async def get_event(self, test_id: int) -> TestTable:
+    async def get_test(self, test_id: int) -> TestTable:
         return self.TestTable.query.where(self.TestTable.id == test_id).gino.first()
