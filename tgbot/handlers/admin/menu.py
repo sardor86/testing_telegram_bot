@@ -21,7 +21,7 @@ async def get_all_test(callback: CallbackQuery) -> None:
     tests_list = await Tests().get_all_tests()
     answer = ''
     for test in tests_list:
-        answer += test.name + '\n'
+        answer += f'{test.name}\n'
 
     await callback.message.edit_text(answer)
 
