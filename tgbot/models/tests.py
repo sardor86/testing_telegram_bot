@@ -24,15 +24,14 @@ class Tests(Base):
             path=path
         )
         await test.create()
-
         return test.id
 
-    async def check_test(self, test_id: int) -> bool:
-        return not await self.TestTable.query.where(self.TestTable.id == test_id).gino.first() is None
+    async def check_test(self, test_name: str) -> bool:
+        return not await self.TestTable.query.where(self.TestTable.name == test_name).gino.first() is None
 
-    async def delete_test(self, test_id: int) -> bool:
-        if await self.check_test(test_id):
-            test = await self.TestTable.query.where(self.TestTable.id == test_id).gino.first()
+    async def delete_test(self, test_name: str) -> bool:
+        if await self.check_test(test_name):
+            test = await self.TestTable.query.where(self.TestTable.name == test_name).gino.first()
             os.remove(test.path)
             await test.delete()
             return True
@@ -41,5 +40,5 @@ class Tests(Base):
     async def get_all_tests(self) -> list:
         return await self.TestTable.query.gino.all()
 
-    async def get_test(self, test_id: int) -> TestTable:
-        return self.TestTable.query.where(self.TestTable.id == test_id).gino.first()
+    async def get_test(self, test_name: int) -> TestTable:
+        return self.TestTable.query.where(self.TestTable.name == test_name).gino.first()

@@ -16,7 +16,7 @@ async def create_new_test(callback: CallbackQuery) -> None:
     )
 
     logger.info('create new test')
-    await callback.message.edit_text('Отправьте название теста')
+    await callback.message.edit_text('Отправьте название теста\nВы в любое время можене отменить командой /cansel')
 
     logger.info('set get_name in AddNewTest state')
     await AddNewTest.get_name.set()
@@ -27,6 +27,11 @@ async def get_name(message: Message, state: FSMContext) -> None:
         level=logging.INFO,
         format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
     )
+
+    logger.info('check text')
+    if await Tests().check_test(message.text):
+        await message.reply('Такой тест уже существует')
+        return
 
     logger.info('get tests name ant save it on RAM')
     async with state.proxy() as data:
@@ -62,7 +67,19 @@ async def get_file(message: Message, state: FSMContext) -> None:
     await message.bot.download_file(file.file_path, str(file_path))
 
     logger.info('Create data in data base')
-    await Tests().create_test(test_name, file_path)
+    await Tests().create_test(test_name, str(file_path))
+
+    await message.reply('Тест был создан')
+
+
+async def get_not_file(message: Message) -> None:
+    logging.basicConfig(
+        level=logging.INFO,
+        format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
+    )
+
+    logger.warning('this is not file')
+    await message.reply('Это не файл')
 
 
 def register_create_new_test_handler(dp: Dispatcher) -> None:
@@ -79,10 +96,17 @@ def register_create_new_test_handler(dp: Dispatcher) -> None:
     logger.info('Register get_name state in create new test handler')
     dp.register_message_handler(get_name,
                                 is_admin=True,
+                                content_types=['text'],
                                 state=AddNewTest.get_name)
 
     logger.info('Register get_file state in create new test handler')
     dp.register_message_handler(get_file,
                                 is_admin=True,
                                 content_types=['document'],
+                                state=AddNewTest.get_file)
+
+    logger.info('Register get_not_file state in create new test handler')
+    dp.register_message_handler(get_not_file,
+                                lambda message: not message.document,
+                                is_admin=True,
                                 state=AddNewTest.get_file)
