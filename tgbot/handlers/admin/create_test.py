@@ -67,7 +67,7 @@ async def get_file(message: Message, state: FSMContext) -> None:
     await message.bot.download_file(file.file_path, str(file_path))
 
     logger.info('Create data in data base')
-    await Tests().create_test(test_name, str(file_path))
+    test = await Tests().create_test(test_name)
 
     await message.reply('Тест был создан')
 
