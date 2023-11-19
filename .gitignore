@@ -62,4 +62,4 @@ venv.bak/
 .idea/*
 .env
 
-tests/
+temp_file/

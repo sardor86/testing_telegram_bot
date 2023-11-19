@@ -4,9 +4,11 @@ from aiogram.dispatcher import FSMContext, Dispatcher
 import logging
 from tgbot.config import logger, path
 import datetime
+import os
 
-from tgbot.models import Tests
+from tgbot.models import Tests, Questions
 from tgbot.misc import AddNewTest
+from tgbot.XLSX import XlsxReader
 
 
 async def create_new_test(callback: CallbackQuery) -> None:
@@ -63,12 +65,17 @@ async def get_file(message: Message, state: FSMContext) -> None:
         return
 
     logger.info('Download file')
-    file_path = path / 'tests' / datetime.datetime.now().strftime('%y-%m-%d-%H-%M-%S-%f.xlsx')
+    file_path = path / 'temp_file' / datetime.datetime.now().strftime('%y-%m-%d-%H-%M-%S-%f.xlsx')
     await message.bot.download_file(file.file_path, str(file_path))
 
     logger.info('Create data in data base')
     test = await Tests().create_test(test_name)
 
+    xlsx = XlsxReader(file_path)
+    await Questions().create_question(test, xlsx.read())
+
+    logger.info('Delete file')
+    os.remove(file_path)
     await message.reply('Тест был создан')
 
 

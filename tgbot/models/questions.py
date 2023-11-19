@@ -1,6 +1,5 @@
 from tgbot.config import gino_db
 from .base import Base
-from .tests import Tests
 
 
 class Questions(Base):
@@ -8,7 +7,7 @@ class Questions(Base):
         __tablename__ = 'questions'
 
         id = gino_db.Column(gino_db.Integer(), primary_key=True)
-        test_name = gino_db.Column(gino_db.ForeignKey('tests.name'), nullable=False)
+        test = gino_db.Column(gino_db.ForeignKey('tests.id'), nullable=False)
         question = gino_db.Column(gino_db.String(512), nullable=False)
         correct_answer = gino_db.Column(gino_db.String(512), nullable=False)
         answer1 = gino_db.Column(gino_db.String(512), nullable=False)
@@ -21,9 +20,9 @@ class Questions(Base):
         def __repr__(self) -> str:
             return f'<Questions {self.id}>'
 
-    async def create_question(self, test: Tests.TestTable, data_list: list) -> None:
+    async def create_question(self, test_id: int, data_list: list) -> None:
         for data in data_list:
-            question = self.QuestionsTable(test_name=test.name,
+            question = self.QuestionsTable(test=test_id,
                                            question=data['question'],
                                            correct_answer=data['correct_answer'],
                                            answer1=data['answer1'],
@@ -31,13 +30,13 @@ class Questions(Base):
                                            answer3=data['answer3'])
             await question.create()
 
-    async def check_question(self, test: Tests.TestTable) -> bool:
-        result = self.QuestionsTable.query.where(self.QuestionsTable.test_name == test.name).gino.first() is None
+    async def check_question(self, test_id: int) -> bool:
+        result = self.QuestionsTable.query.where(self.QuestionsTable.test == test_id).gino.first() is None
         return not result
 
-    async def delete_question(self, test: Tests.TestTable) -> bool:
-        if await self.check_question(test):
-            question = await self.QuestionsTable.query.where(self.QuestionsTable.test_name == test.name).gino.first()
+    async def delete_question(self, test_id: int) -> bool:
+        if await self.check_question(test_id):
+            question = await self.QuestionsTable.query.where(self.QuestionsTable.test == test_id).gino.first()
             await question.delete()
             return True
         return False
@@ -45,5 +44,5 @@ class Questions(Base):
     async def get_all_questions(self) -> list:
         return await self.QuestionsTable.query.gino.all()
 
-    async def get_question(self, test: Tests.TestTable) -> QuestionsTable:
-        return self.QuestionsTable.query.where(self.QuestionsTable.test_name == test.name).gino.first()
+    async def get_question(self, test_id: int) -> QuestionsTable:
+        return self.QuestionsTable.query.where(self.QuestionsTable.test == test_id).gino.first()

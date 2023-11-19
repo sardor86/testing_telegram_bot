@@ -20,7 +20,7 @@ class Tests(Base):
             name=name
         )
         await test.create()
-        return test
+        return test.id
 
     async def check_test(self, test_name: str) -> bool:
         return not await self.TestTable.query.where(self.TestTable.name == test_name).gino.first() is None

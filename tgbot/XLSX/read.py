@@ -12,13 +12,13 @@ class XlsxReader:
     def read(self) -> list:
         result = []
 
-        for row in self.row_size:
+        for row in range(1, self.row_size):
             data = {
-                'question': self.worksheet.cell(row=row, column=1),
-                'correct_answer': self.worksheet.cell(row=row, column=2),
-                'answer1': self.worksheet.cell(row=row, column=3),
-                'answer2': self.worksheet.cell(row=row, column=4),
-                'answer3': self.worksheet.cell(row=row, column=5),
+                'question': str(self.worksheet.cell(row=row, column=1).value),
+                'correct_answer': str(self.worksheet.cell(row=row, column=2).value),
+                'answer1': str(self.worksheet.cell(row=row, column=3).value),
+                'answer2': str(self.worksheet.cell(row=row, column=4).value),
+                'answer3': str(self.worksheet.cell(row=row, column=5).value),
             }
             result.append(data)
 
