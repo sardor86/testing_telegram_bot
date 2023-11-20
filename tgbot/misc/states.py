@@ -8,3 +8,7 @@ class AddNewTest(StatesGroup):
 
 class DeleteTest(StatesGroup):
     get_name = State()
+
+
+class RegisterUser(StatesGroup):
+    get_key = State()

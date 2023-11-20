@@ -1,1 +1,1 @@
-from .inline import admin_menu_keyboard
+from .inline import admin_menu_keyboard, user_registration_menu

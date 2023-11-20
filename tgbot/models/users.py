@@ -10,14 +10,14 @@ class Users(Base):
         user_id = gino_db.Column(gino_db.Integer(), nullable=False)
 
         def __str__(self) -> str:
-            return f'<Tests {self.id}>'
+            return f'<User {self.id}>'
 
         def __repr__(self) -> str:
-            return f'<Tests {self.id}>'
+            return f'<User {self.id}>'
 
     async def add_user(self, user_id: int) -> int:
         user = self.UserTable(
-            name=user_id
+            user_id=user_id
         )
         await user.create()
         return user.id
@@ -25,7 +25,7 @@ class Users(Base):
     async def check_user(self, user_id: int) -> bool:
         return not await self.UserTable.query.where(self.UserTable.user_id == user_id).gino.first() is None
 
-    async def delete_test(self, user_id: int) -> bool:
+    async def delete_user(self, user_id: int) -> bool:
         if await self.check_user(user_id):
             user = await self.UserTable.query.where(self.UserTable.user_id == user_id).gino.first()
             await user.delete()
