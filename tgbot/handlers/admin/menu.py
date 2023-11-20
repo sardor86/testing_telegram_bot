@@ -14,7 +14,7 @@ async def admin_menu(message: Message):
         format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
     )
     logger.info('Admin menu')
-    await message.reply("Hello, admin!", reply_markup=admin_menu_keyboard())
+    await message.reply("Hello, admin!", reply_markup=await (admin_menu_keyboard()))
 
 
 async def get_all_test(callback: CallbackQuery) -> None:
