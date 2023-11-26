@@ -36,7 +36,9 @@ async def get_test(message: Message, state: FSMContext) -> None:
     logger.info('state finish')
     await state.finish()
 
-    logger.info('check test')
+    logger.info('get test')
+
+    logger.info('delete questions')
     if await Tests().delete_test(message.text):
         logger.info('delete test')
         await message.reply('Тест удален')

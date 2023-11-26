@@ -1,1 +1,1 @@
-from .states import AddNewTest, DeleteTest, RegisterUser
+from .states import AddNewTest, DeleteTest, RegisterUser, TakeTest

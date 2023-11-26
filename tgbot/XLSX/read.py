@@ -12,7 +12,7 @@ class XlsxReader:
     def read(self) -> list:
         result = []
 
-        for row in range(1, self.row_size):
+        for row in range(1, self.row_size + 1):
             data = {
                 'question': str(self.worksheet.cell(row=row, column=1).value),
                 'correct_answer': str(self.worksheet.cell(row=row, column=2).value),

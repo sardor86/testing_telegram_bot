@@ -1,5 +1,6 @@
 from tgbot.config import gino_db
 from .base import Base
+from .questions import Questions
 
 
 class Tests(Base):
@@ -28,6 +29,7 @@ class Tests(Base):
     async def delete_test(self, test_name: str) -> bool:
         if await self.check_test(test_name):
             test = await self.TestTable.query.where(self.TestTable.name == test_name).gino.first()
+            await Questions().delete_question(test.id)
             await test.delete()
             return True
         return False
@@ -35,5 +37,5 @@ class Tests(Base):
     async def get_all_tests(self) -> list:
         return await self.TestTable.query.gino.all()
 
-    async def get_test(self, test_name: int) -> TestTable:
-        return self.TestTable.query.where(self.TestTable.name == test_name).gino.first()
+    async def get_test(self, test_name: str) -> TestTable:
+        return await self.TestTable.query.where(self.TestTable.name == test_name).gino.first()

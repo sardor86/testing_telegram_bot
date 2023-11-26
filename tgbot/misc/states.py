@@ -12,3 +12,8 @@ class DeleteTest(StatesGroup):
 
 class RegisterUser(StatesGroup):
     get_key = State()
+
+
+class TakeTest(StatesGroup):
+    choice = State()
+    passing = State()

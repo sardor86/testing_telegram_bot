@@ -31,13 +31,14 @@ class Questions(Base):
             await question.create()
 
     async def check_question(self, test_id: int) -> bool:
-        result = self.QuestionsTable.query.where(self.QuestionsTable.test == test_id).gino.first() is None
+        result = await self.QuestionsTable.query.where(self.QuestionsTable.test == test_id).gino.first() is None
         return not result
 
     async def delete_question(self, test_id: int) -> bool:
         if await self.check_question(test_id):
-            question = await self.QuestionsTable.query.where(self.QuestionsTable.test == test_id).gino.first()
-            await question.delete()
+            question = await self.QuestionsTable.query.where(self.QuestionsTable.test == test_id).gino.all()
+            for q in question:
+                await q.delete()
             return True
         return False
 
@@ -45,4 +46,4 @@ class Questions(Base):
         return await self.QuestionsTable.query.gino.all()
 
     async def get_question(self, test_id: int) -> QuestionsTable:
-        return self.QuestionsTable.query.where(self.QuestionsTable.test == test_id).gino.first()
+        return await self.QuestionsTable.query.where(self.QuestionsTable.test == test_id).gino.all()

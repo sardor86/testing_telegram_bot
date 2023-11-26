@@ -4,7 +4,7 @@ from aiogram.types import Message
 from aiogram.dispatcher import Dispatcher, FSMContext
 
 from tgbot.config import logger
-from tgbot.keyboards import user_registration_menu
+from tgbot.keyboards import user_registration_menu, user_menu
 
 
 async def cansel(message: Message, state: FSMContext) -> None:
@@ -23,6 +23,10 @@ async def not_register(message: Message):
     await message.reply('Вы не зарегестрированы', reply_markup=(await user_registration_menu()))
 
 
+async def user(message: Message):
+    await message.reply('Пройти тест', reply_markup=await user_menu())
+
+
 def register_user(dp: Dispatcher):
     logging.basicConfig(
         level=logging.INFO,
@@ -34,3 +38,6 @@ def register_user(dp: Dispatcher):
 
     logger.info('register cansel command handler')
     dp.register_message_handler(cansel, commands=['cansel'], state="*")
+
+    logger.info('register user menu handler')
+    dp.register_message_handler(user, commands=['menu'], register=True)
