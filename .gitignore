@@ -63,3 +63,4 @@ venv.bak/
 .env
 
 temp_file/
+postgres_data/

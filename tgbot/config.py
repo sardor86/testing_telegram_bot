@@ -19,7 +19,6 @@ class TgBot:
 @dataclass
 class DataBase:
     host: str
-    port: int
     user: str
     password: str
     db: str
@@ -34,7 +33,7 @@ class Config:
 async def set_gino(data_base: DataBase) -> None:
     await gino_db.set_bind(f'postgresql://{data_base.user}:'
                            f'{data_base.password}@'
-                           f'{data_base.host}:{data_base.port}/'
+                           f'{data_base.host}:5432/'
                            f'{data_base.db}')
 
 
@@ -55,10 +54,9 @@ async def load_config(path: str = None) -> Config:
                             ),
                             db=DataBase(
                                 host=env.str('DB_HOST'),
-                                port=env.int('DB_PORT'),
-                                user=env.str('DB_USER'),
-                                password=env.str('DB_PASS'),
-                                db=env.str('DB_NAME')
+                                user=env.str('POSTGRES_USER'),
+                                password=env.str('POSTGRES_PASSWORD'),
+                                db=env.str('POSTGRES_DB')
                             )
                         )
     await set_gino(config.db)
